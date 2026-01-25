@@ -1,0 +1,10 @@
+google-generativeai
+pyaudio
+SpeechRecognition
+openwakeword
+edge-tts
+playsound3
+numpy
+sounddevice
+markdown
+beautifulsoup4
