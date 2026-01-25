@@ -41,6 +41,7 @@ A robust, modular voice assistant framework built to run on a Raspberry Pi (or a
 *   **Compute**: Raspberry Pi 4/5 (or any Windows/Linux PC)
 *   **Microphone**: USB Condenser Mic
 *   **Speaker**: USB Speakers
+  
 Note: I used USB components because the Raspberry Pi 5 doesn't have a 3.5mm jack for audio i/o
 
 ## Installation
@@ -64,6 +65,7 @@ Note: I used USB components because the Raspberry Pi 5 doesn't have a 3.5mm jack
     ```powershell
     .\setup_windows.ps1
     ```
+    
     *Note: You may need to run `Set-ExecutionPolicy Unrestricted` if scripts are blocked.*
 
 3.  **Configuration**:
