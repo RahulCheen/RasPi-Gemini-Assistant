@@ -38,7 +38,6 @@ class WakeWordListener:
     def __init__(self, model_names=[CONFIG.get("WAKE_WORD_MODEL", "hey_jarvis")]):
         print(f"Loading Wake Word Model: {model_names}...")
         try:
-        try:
             self.model = Model(wakeword_models=model_names, inference_framework="onnx")
         except Exception as e:
             print(f"Error loading Wake Word model: {e}")
@@ -75,8 +74,6 @@ class WakeWordListener:
     def listen_for_wake_word(self):
         self.start_stream()
         print("Listening for wake word...")
-        try:
-            while True:
         try:
             while True:
                 data = self.stream.read(self.chunk_size, exception_on_overflow=False)
