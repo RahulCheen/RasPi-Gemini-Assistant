@@ -14,7 +14,7 @@ import openwakeword
 from openwakeword.model import Model
 import markdown
 from bs4 import BeautifulSoup
-
+import audioop
 import asyncio
 import tempfile
 from pathlib import Path
@@ -43,10 +43,16 @@ class WakeWordListener:
             print(f"Error loading Wake Word model: {e}")
             sys.exit(1)
         
-        self.chunk_size = 1280
+        self.target_rate = 16000
+        self.target_chunk_size = 1280 # 80ms at 16kHz
+        
         self.format = pyaudio.paInt16
-        self.channels = 1
-        self.rate = 16000
+        self.channels = CONFIG.get("MIC_CHANNELS", 1)
+        self.rate = CONFIG.get("MIC_RATE", 16000)
+        
+        # Calculate chunk size to match 80ms duration at input rate
+        self.chunk_size = int((self.rate * self.target_chunk_size) / self.target_rate)
+        
         self.p = pyaudio.PyAudio()
         self.stream = None
 
@@ -74,10 +80,18 @@ class WakeWordListener:
     def listen_for_wake_word(self):
         self.start_stream()
         print("Listening for wake word...")
+        cv_state = None
         try:
             while True:
                 data = self.stream.read(self.chunk_size, exception_on_overflow=False)
-                audio = np.frombuffer(data, dtype=np.int16)
+                
+                # Handle Channel Mixing (Stereo to Mono)
+                if self.channels > 1:
+                    data = audioop.tomono(data, 2, 1, 1)
+                    
+                # Handle Resampling (Input Rate to 16000Hz)
+                if self.rate != self.target_rate:
+                    data, cv_state = audioop.ratecv(data, 2, 1, self.rate, self.target_rate, cv_state)
                 
                 audio = np.frombuffer(data, dtype=np.int16)
                 
